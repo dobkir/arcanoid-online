@@ -1,3 +1,8 @@
+const KEYS = {
+  LEFT: 37,
+  RIGHT: 39
+};
+
 let game = {
   context: null,
   width: document.querySelector("#mycanvas").getAttribute("width"),
@@ -15,6 +20,17 @@ let game = {
   },
   init() {
     this.context = document.querySelector("#mycanvas").getContext("2d");
+    this.setEvents();
+  },
+  setEvents() {
+    window.addEventListener("keydown", e => {
+      if (e.keyCode === KEYS.LEFT || e.keyCode === KEYS.RIGHT) {
+        this.platform.start(e.keyCode);
+      }
+    });
+    window.addEventListener("keyup", e => {
+      this.platform.stop();
+    });
   },
   preload(callback) {
     let loadedSprites = 0;
@@ -54,7 +70,11 @@ let game = {
     }
   },
 
-  renderSprites() {
+  rerenderSprites() {
+    this.platform.move();
+  },
+
+  renderingSprites() {
     this.context.drawImage(this.sprites.background, 0, 0);
     // The first frame of the animation.
     this.context.drawImage(this.sprites.ball, 0, 0, this.ball.width, this.ball.height, this.ball.x, this.ball.y, this.ball.width, this.ball.height);
@@ -65,7 +85,9 @@ let game = {
 
   runGame() {
     window.requestAnimationFrame(() => {
+      this.rerenderingSprites();
       this.renderSprites();
+      this.runGame();
     });
   },
 
@@ -87,8 +109,27 @@ game.ball = {
 
 
 game.platform = {
+  velocity: 6,
+  dx: 0,
   x: game.width / 2 - 125,
   y: game.height - 45,
+  start(direction) {
+    if (direction === KEYS.LEFT) {
+      this.dx = -this.velocity;
+    } else if (direction === KEYS.RIGHT) {
+      this.dx = this.velocity;
+    }
+  },
+  stop() {
+    this.dx = 0;
+  },
+  move() {
+    if (this.dx) {
+      this.x += this.dx;
+      // move a ball whith the platform
+      game.ball.x += this.dx;
+    }
+  }
 }
 
 window.addEventListener("load", () => {
