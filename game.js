@@ -1,6 +1,7 @@
 const KEYS = {
   LEFT: 37,
-  RIGHT: 39
+  RIGHT: 39,
+  SPACE: 32
 };
 
 let game = {
@@ -24,7 +25,9 @@ let game = {
   },
   setEvents() {
     window.addEventListener("keydown", e => {
-      if (e.keyCode === KEYS.LEFT || e.keyCode === KEYS.RIGHT) {
+      if (e.keyCode === KEYS.SPACE) {
+        this.platform.startBall();
+      } else if (e.keyCode === KEYS.LEFT || e.keyCode === KEYS.RIGHT) {
         this.platform.start(e.keyCode);
       }
     });
@@ -70,11 +73,12 @@ let game = {
     }
   },
 
-  rerenderSprites() {
+  updateSprites() {
     this.platform.move();
+    this.ball.move();
   },
 
-  renderingSprites() {
+  renderSprites() {
     this.context.drawImage(this.sprites.background, 0, 0);
     // The first frame of the animation.
     this.context.drawImage(this.sprites.ball, 0, 0, this.ball.width, this.ball.height, this.ball.x, this.ball.y, this.ball.width, this.ball.height);
@@ -85,13 +89,13 @@ let game = {
 
   runGame() {
     window.requestAnimationFrame(() => {
-      this.rerenderingSprites();
+      this.updateSprites();
       this.renderSprites();
       this.runGame();
     });
   },
 
-  start() {
+  startGame() {
     this.init();
     this.preload(() => {
       this.createBlocksArea();
@@ -101,10 +105,20 @@ let game = {
 };
 
 game.ball = {
+  velocity: 3,
+  dy: 0,
   x: game.width / 2 - 20,
   y: game.height - 85,
   width: 40,
-  height: 40
+  height: 40,
+  start() {
+    this.dy = -this.velocity;
+  },
+  move() {
+    if (this.dy) {
+      this.y += this.dy;
+    }
+  }
 }
 
 
@@ -113,6 +127,16 @@ game.platform = {
   dx: 0,
   x: game.width / 2 - 125,
   y: game.height - 45,
+  ball: game.ball,
+  startBall() {
+    // if a ball on the platform
+    if (this.ball) {
+      // then activate start() function
+      this.ball.start();
+      // and there is no ball on the platform now
+      this.ball = null;
+    }
+  },
   start(direction) {
     if (direction === KEYS.LEFT) {
       this.dx = -this.velocity;
@@ -126,12 +150,14 @@ game.platform = {
   move() {
     if (this.dx) {
       this.x += this.dx;
-      // move a ball whith the platform
-      game.ball.x += this.dx;
+      // When a ball is on the platform, then they moving together.
+      if (this.ball) {
+        this.ball.x += this.dx;
+      }
     }
   }
 }
 
 window.addEventListener("load", () => {
-  game.start();
+  game.startGame();
 });
