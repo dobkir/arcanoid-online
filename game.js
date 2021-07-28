@@ -79,13 +79,15 @@ let game = {
   },
 
   renderSprites() {
+    // Clear sprites rectangles before each new rendering
+    this.context.clearRect(0, 0, this.width, this.height);
+    // Rendering of the background
     this.context.drawImage(this.sprites.background, 0, 0);
     // The first frame of the animation.
     this.context.drawImage(this.sprites.ball, 0, 0, this.ball.width, this.ball.height, this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     this.context.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
     this.renderBlocksArea();
   },
-
 
   runGame() {
     window.requestAnimationFrame(() => {
@@ -101,11 +103,17 @@ let game = {
       this.createBlocksArea();
       this.runGame();
     });
+  },
+
+  random(min, max) {
+    // Get a random integer in a given range
+    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 };
 
 game.ball = {
   velocity: 3,
+  dx: 0,
   dy: 0,
   x: game.width / 2 - 20,
   y: game.height - 85,
@@ -113,10 +121,16 @@ game.ball = {
   height: 40,
   start() {
     this.dy = -this.velocity;
+    // The random movement of a ball along the x-axis
+    this.dx = game.random(-this.velocity, this.velocity);
   },
   move() {
     if (this.dy) {
       this.y += this.dy;
+    }
+    // The random movement of a ball along the x-axis
+    if (this.dx) {
+      this.x += this.dx;
     }
   }
 }
