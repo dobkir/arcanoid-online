@@ -60,6 +60,8 @@ let game = {
     for (let row = 0; row < this.rows; row++) {
       for (let column = 0; column < this.columns; column++) {
         this.blocks.push({
+          width: 111,
+          height: 39,
           x: 113 * column + ((this.width - 113 * this.columns) / 2),
           y: 42 * row + ((this.height - 42 * this.rows) / 2)
         });
@@ -76,6 +78,22 @@ let game = {
   updateSprites() {
     this.platform.move();
     this.ball.move();
+    this.collideBlocks();
+    this.collidePlatform();
+  },
+
+  collideBlocks() {
+    for (let block of this.blocks) {
+      if (this.ball.collide(block)) {
+        this.ball.bumpBlock(block);
+      }
+    }
+  },
+
+  collidePlatform() {
+    if (this.ball.collide(this.platform)) {
+      this.ball.bumpPlatform(this.platform);
+    }
   },
 
   renderSprites() {
@@ -132,6 +150,39 @@ game.ball = {
     if (this.dx) {
       this.x += this.dx;
     }
+  },
+  collide(element) {
+    // Change of coordinates on next render
+    let x = this.x + this.dx;
+    let y = this.y + this.dy;
+
+    // Checking the collision event of the ball and the block
+    if (x + this.width > element.x &&
+      x < element.x + element.width &&
+      y + this.height > element.y &&
+      y < element.y + element.height) {
+      return true;
+    }
+    return false;
+  },
+  // Bumping the ball off the block
+  // Here I reverse a movement by the y-axis direction of the ball. 
+  // In this case, the angle of movement is also mirrored to the opposite angle.
+  bumpBlock(block) {
+    this.dy *= -1;
+  },
+  // Bumping the ball off the platform
+  bumpPlatform(platform) {
+    // Here I reverse a movement by the y-axis direction of the ball. 
+    // In this case, the angle of movement is also mirrored to the opposite angle.
+    this.dy *= -1;
+    // The further from the center is the collision of the ball, 
+    // and the platform occurs, then the sharper the angle of rebound.
+
+    // The coordinates of the point where the ball touches a platform
+    let touchX = this.x + this.width / 2;
+    // Offset on the x-axis to obtain the correct bounce angle of the ball from the platform
+    this.dx = this.velocity * platform.getTouchOffset(touchX);
   }
 }
 
@@ -139,6 +190,8 @@ game.ball = {
 game.platform = {
   velocity: 6,
   dx: 0,
+  width: 251,
+  height: 41,
   x: game.width / 2 - 125,
   y: game.height - 45,
   ball: game.ball,
@@ -169,6 +222,13 @@ game.platform = {
         this.ball.x += this.dx;
       }
     }
+  },
+  // Offset on the x-axis to obtain the correct bounce angle of the ball
+  getTouchOffset(x) {
+    let diff = (this.x + this.width) - x;
+    let offset = this.width - diff;
+    let result = 2 * offset / this.width;
+    return result - 1;
   }
 }
 
