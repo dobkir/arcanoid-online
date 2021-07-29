@@ -80,14 +80,15 @@ const game = {
   },
 
   updateSprites() {
+    this.collideBallAndBlocks();
+    this.collideBallAndPlatform();
+    this.platform.collideCanvasBounds();
     this.platform.move();
-    this.ball.move();
     this.ball.collideCanvasBounds();
-    this.collideBlocks();
-    this.collidePlatform();
+    this.ball.move();
   },
 
-  collideBlocks() {
+  collideBallAndBlocks() {
     for (let block of this.blocks) {
       // If the block was not destroyed by the ball, and collide with it, then:
       if (block.active && this.ball.collide(block)) {
@@ -96,7 +97,7 @@ const game = {
     }
   },
 
-  collidePlatform() {
+  collideBallAndPlatform() {
     if (this.ball.collide(this.platform)) {
       this.ball.bumpPlatform(this.platform);
     }
@@ -184,10 +185,10 @@ game.ball = {
     const ballBottomSide = ballTopSide + this.height;
 
     // Canvas sides
+    const canvasLeftSide = 0;
     const canvasRightSide = game.width;
     const canvasTopSide = 0;
     const canvasBottomSide = game.height;
-    const canvasLeftSide = 0;
 
     if (ballLeftSide < canvasLeftSide) {
       this.x = 0;
@@ -212,7 +213,9 @@ game.ball = {
   },
   // Bumping the ball off the platform
   bumpPlatform(platform) {
-
+    if (platform.dx) {
+      this.x += platform.dx;
+    }
     // If the ball moving up, bumpPlatform() shouldn't act
     if (this.dy > 0) {
       // Here I reverse a movement by the y-axis direction of the ball. 
@@ -227,7 +230,7 @@ game.ball = {
       this.dx = this.velocity * platform.getTouchOffset(touchX);
     }
   }
-}
+};
 
 
 game.platform = {
@@ -272,8 +275,24 @@ game.platform = {
     let offset = this.width - diff;
     let result = 2 * offset / this.width;
     return result - 1;
+  },
+  collideCanvasBounds() {
+    // Change of coordinates on next render
+    const x = this.x + this.dx;
+
+    // Platform sides
+    const platformLeftSide = x;
+    const platformRightSide = platformLeftSide + this.width;
+
+    // Canvas sides
+    const canvasLeftSide = 0;
+    const canvasRightSide = game.width;
+
+    if (platformLeftSide < canvasLeftSide || platformRightSide > canvasRightSide) {
+      this.dx = 0;
+    }
   }
-}
+};
 
 window.addEventListener("load", () => {
   game.startGame();
