@@ -5,6 +5,7 @@ const KEYS = {
 };
 
 const game = {
+  running: true,
   context: null,
   width: document.querySelector("#mycanvas").getAttribute("width"),
   height: document.querySelector("#mycanvas").getAttribute("height"),
@@ -115,11 +116,15 @@ const game = {
   },
 
   runGame() {
-    window.requestAnimationFrame(() => {
-      this.updateSprites();
-      this.renderSprites();
-      this.runGame();
-    });
+    // When running is true, it means that the game is running
+    if (this.running) {
+      // Calls itself recursively for each frame of the animation.
+      window.requestAnimationFrame(() => {
+        this.updateSprites();
+        this.renderSprites();
+        this.runGame();
+      });
+    }
   },
 
   startGame() {
@@ -128,6 +133,12 @@ const game = {
       this.createBlocksArea();
       this.runGame();
     });
+  },
+
+  endGame(message) {
+    alert(message);
+    this.running = false;
+    window.location.reload();
   },
 
   random(min, max) {
@@ -200,7 +211,7 @@ game.ball = {
       this.y = 0;
       this.dy = this.velocity;
     } else if (ballBottomSide > canvasBottomSide) {
-      alert("Вы проиграли");
+      game.endGame("Вы проиграли");
     }
   },
   // Bumping the ball off the block
