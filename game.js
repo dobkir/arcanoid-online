@@ -60,6 +60,7 @@ let game = {
     for (let row = 0; row < this.rows; row++) {
       for (let column = 0; column < this.columns; column++) {
         this.blocks.push({
+          active: true,
           width: 111,
           height: 39,
           x: 113 * column + ((this.width - 113 * this.columns) / 2),
@@ -71,7 +72,10 @@ let game = {
 
   renderBlocksArea() {
     for (let block of this.blocks) {
-      this.context.drawImage(this.sprites.block, block.x, block.y);
+      // If the block was not destroyed by the ball, then render it.
+      if (block.active) {
+        this.context.drawImage(this.sprites.block, block.x, block.y);
+      }
     }
   },
 
@@ -84,7 +88,8 @@ let game = {
 
   collideBlocks() {
     for (let block of this.blocks) {
-      if (this.ball.collide(block)) {
+      // If the block was not destroyed by the ball, and collide with it, then:
+      if (block.active && this.ball.collide(block)) {
         this.ball.bumpBlock(block);
       }
     }
@@ -170,6 +175,8 @@ game.ball = {
   // In this case, the angle of movement is also mirrored to the opposite angle.
   bumpBlock(block) {
     this.dy *= -1;
+    // When the ball hits a block, the block must be destroyed
+    block.active = false;
   },
   // Bumping the ball off the platform
   bumpPlatform(platform) {
