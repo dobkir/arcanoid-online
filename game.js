@@ -11,6 +11,7 @@ const game = {
   height: document.querySelector("#mycanvas").getAttribute("height"),
   platform: null,
   ball: null,
+  score: 0,
   blocks: [],
   rows: 4,
   columns: 8,
@@ -89,11 +90,21 @@ const game = {
     this.ball.move();
   },
 
+  addScore() {
+    ++this.score;
+    // When the counter shows that blocks are ended, finish the game
+    if (this.score >= this.blocks.length) {
+      this.endGame("You win!");
+    }
+  },
+
   collideBallAndBlocks() {
     for (let block of this.blocks) {
       // If the block was not destroyed by the ball, and collide with it, then:
       if (block.active && this.ball.collide(block)) {
         this.ball.bumpBlock(block);
+        // When a ball has been colliding the block, add scores in the method addScore()
+        this.addScore();
       }
     }
   },
@@ -211,7 +222,7 @@ game.ball = {
       this.y = 0;
       this.dy = this.velocity;
     } else if (ballBottomSide > canvasBottomSide) {
-      game.endGame("Вы проиграли");
+      game.endGame("You lose!");
     }
   },
   // Bumping the ball off the block
