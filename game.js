@@ -27,8 +27,29 @@ const game = {
     fail: null,
     victory: null,
   },
+
+  initCanvasSize() {
+    let realWidth = window.innerWidth * window.devicePixelRatio;
+    let realHeight = window.innerHeight * window.devicePixelRatio;
+    let maxHeight = this.height;
+    let maxWidth = this.width;
+    // Always fully fit the width
+    // It means that the final width is maxWidth, then the proportion is fair:
+    // realWidth / realHeight
+    // maxWidth / resultHeight
+    // resultHeight = maxWidth * realHeight / realWidth
+    // Round down and cut off everything above maxWidth
+    this.height = Math.min(Math.floor(maxWidth * realHeight / realWidth), maxHeight);
+    // responsive variant
+    // this.height = Math.floor(maxWidth * realHeight / realWidth);
+    this.canvas.width = this.width;
+    this.canvas.height = this.height;
+  },
+
   init() {
-    this.context = document.querySelector("#mycanvas").getContext("2d");
+    this.canvas = document.getElementById("mycanvas");
+    this.context = this.canvas.getContext("2d");
+    this.initCanvasSize();
     this.setTextFont();
     this.setEvents();
   },
@@ -84,6 +105,11 @@ const game = {
   },
 
   createBlocksArea() {
+    this.ball.x = this.width / 2 - 20;
+    this.ball.y = this.height - 85;
+    this.platform.x = this.width / 2 - 125;
+    this.platform.y = this.height - 45;
+
     for (let row = 0; row < this.rows; row++) {
       for (let column = 0; column < this.columns; column++) {
         this.blocks.push({
@@ -149,10 +175,10 @@ const game = {
     // Rendering of the background
     this.context.drawImage(this.sprites.background, 0, 0);
     // The first frame of the animation.
-    this.context.drawImage(this.sprites.ball, 0, 0, this.ball.width, this.ball.height, this.ball.x, this.ball.y, this.ball.width, this.ball.height);
+    this.context.drawImage(this.sprites.ball, this.ball.frame * this.ball.width, 0, this.ball.width, this.ball.height, this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     this.context.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
     this.renderBlocksArea();
-    this.context.fillText("Score: " + this.score, 70, 140);
+    this.context.fillText("Score: " + this.score, 70, 46);
   },
 
   runGame() {
@@ -204,167 +230,6 @@ const game = {
   }
 };
 
-game.ball = {
-  velocity: 6,
-  dx: 0,
-  dy: 0,
-  x: game.width / 2 - 20,
-  y: game.height - 85,
-  width: 40,
-  height: 40,
-  start() {
-    this.dy = -this.velocity;
-    // The random movement of a ball along the x-axis
-    this.dx = game.random(-this.velocity, this.velocity);
-  },
-  move() {
-    if (this.dy) {
-      this.y += this.dy;
-    }
-    // The random movement of a ball along the x-axis
-    if (this.dx) {
-      this.x += this.dx;
-    }
-  },
-  collide(element) {
-    // Change of coordinates on next render
-    const x = this.x + this.dx;
-    const y = this.y + this.dy;
-
-    // Checking the collision event of the ball and the block
-    if (x + this.width > element.x &&
-      x < element.x + element.width &&
-      y + this.height > element.y &&
-      y < element.y + element.height) {
-      return true;
-    }
-    return false;
-  },
-  // The handler of a colliding ball with canvas bounds
-  collideCanvasBounds() {
-    // Change of coordinates on next render
-    const x = this.x + this.dx;
-    const y = this.y + this.dy;
-
-    // Ball sides
-    const ballLeftSide = x;
-    const ballRightSide = ballLeftSide + this.width;
-    const ballTopSide = y;
-    const ballBottomSide = ballTopSide + this.height;
-
-    // Canvas sides
-    const canvasLeftSide = 0;
-    const canvasRightSide = game.width;
-    const canvasTopSide = 0;
-    const canvasBottomSide = game.height;
-
-    if (ballLeftSide < canvasLeftSide) {
-      this.x = 0;
-      this.dx = this.velocity;
-      game.sounds.bump.play();
-    } else if (ballRightSide > canvasRightSide) {
-      this.x = canvasRightSide - this.width;
-      this.dx = -this.velocity;
-      game.sounds.bump.play();
-    } else if (ballTopSide < canvasTopSide) {
-      this.y = 0;
-      this.dy = this.velocity;
-      game.sounds.bump.play();
-    } else if (ballBottomSide > canvasBottomSide) {
-      const fail = game.endGame("fail", "You lose!");
-      return fail;
-    }
-  },
-  // Bumping the ball off the block
-  // Here I reverse a movement by the y-axis direction of the ball. 
-  // In this case, the angle of movement is also mirrored to the opposite angle.
-  bumpBlock(block) {
-    this.dy *= -1;
-    // When the ball hits a block, the block must be destroyed
-    block.active = false;
-  },
-  // Bumping the ball off the platform
-  bumpPlatform(platform) {
-    if (platform.dx) {
-      this.x += platform.dx;
-    }
-    // If the ball moving up, bumpPlatform() shouldn't act
-    if (this.dy > 0) {
-      // Here I reverse a movement by the y-axis direction of the ball. 
-      // In this case, the angle of movement is also mirrored to the opposite angle.
-      this.dy = -this.velocity;;
-      // The further from the center is the collision of the ball, 
-      // and the platform occurs, then the sharper the angle of rebound.
-
-      // The coordinates of the point where the ball touches a platform
-      let touchX = this.x + this.width / 2;
-      // Offset on the x-axis to obtain the correct bounce angle of the ball from the platform
-      this.dx = this.velocity * platform.getTouchOffset(touchX);
-    }
-  }
-};
-
-
-game.platform = {
-  velocity: 6,
-  dx: 0,
-  width: 251,
-  height: 41,
-  x: game.width / 2 - 125,
-  y: game.height - 45,
-  ball: game.ball,
-  startBall() {
-    // if a ball on the platform
-    if (this.ball) {
-      // then activate start() function
-      this.ball.start();
-      // and there is no ball on the platform now
-      this.ball = null;
-    }
-  },
-  start(direction) {
-    if (direction === KEYS.LEFT) {
-      this.dx = -this.velocity;
-    } else if (direction === KEYS.RIGHT) {
-      this.dx = this.velocity;
-    }
-  },
-  stop() {
-    this.dx = 0;
-  },
-  move() {
-    if (this.dx) {
-      this.x += this.dx;
-      // When a ball is on the platform, then they moving together.
-      if (this.ball) {
-        this.ball.x += this.dx;
-      }
-    }
-  },
-  // Offset on the x-axis to obtain the correct bounce angle of the ball
-  getTouchOffset(x) {
-    let diff = (this.x + this.width) - x;
-    let offset = this.width - diff;
-    let result = 2 * offset / this.width;
-    return result - 1;
-  },
-  collideCanvasBounds() {
-    // Change of coordinates on next render
-    const x = this.x + this.dx;
-
-    // Platform sides
-    const platformLeftSide = x;
-    const platformRightSide = platformLeftSide + this.width;
-
-    // Canvas sides
-    const canvasLeftSide = 0;
-    const canvasRightSide = game.width;
-
-    if (platformLeftSide < canvasLeftSide || platformRightSide > canvasRightSide) {
-      this.dx = 0;
-    }
-  }
-};
 
 window.addEventListener("load", () => {
   game.startGame();
