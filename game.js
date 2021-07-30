@@ -13,8 +13,8 @@ const game = {
   ball: null,
   score: 0,
   blocks: [],
-  rows: 4,
-  columns: 8,
+  rows: 1,
+  columns: 1,
   sprites: {
     background: null,
     ball: null,
@@ -112,7 +112,8 @@ const game = {
     ++this.score;
     // When the counter shows that blocks are ended, finish the game
     if (this.score >= this.blocks.length) {
-      return this.endGame("victory", "You win!");
+      const victory = this.endGame("victory", "You win!");
+      return victory;
     }
   },
 
@@ -166,11 +167,27 @@ const game = {
     });
   },
 
-  endGame(sound, message) {
+  handler(e) {
+    e.stopPropagation();
+    e.preventDefault();
+  },
+
+  endGameEvent(sound, message) {
     game.sounds[sound].play();
     alert(message);
+  },
+
+  reloadGame() {
     this.running = false;
     window.location.reload();
+  },
+
+  endGame(sound, message) {
+    this.endGameEvent(sound, message);
+
+    this.reloadGame();
+
+    this.handler();
   },
 
   random(min, max) {
@@ -180,7 +197,7 @@ const game = {
 };
 
 game.ball = {
-  velocity: 3,
+  velocity: 6,
   dx: 0,
   dy: 0,
   x: game.width / 2 - 20,
@@ -246,7 +263,8 @@ game.ball = {
       this.dy = this.velocity;
       game.sounds.bump.play();
     } else if (ballBottomSide > canvasBottomSide) {
-      game.endGame("fail", "You lose!");
+      const fail = game.endGame("fail", "You lose!");
+      return fail;
     }
   },
   // Bumping the ball off the block
