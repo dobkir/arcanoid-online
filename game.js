@@ -19,7 +19,13 @@ const game = {
     background: null,
     ball: null,
     platform: null,
-    block: null
+    block: null,
+  },
+  sounds: {
+    bump: null,
+    hit: null,
+    fail: null,
+    victory: null,
   },
   init() {
     this.context = document.querySelector("#mycanvas").getContext("2d");
@@ -39,22 +45,34 @@ const game = {
   },
   preload(callback) {
     let loadedSprites = 0;
-    const requiredSprites = Object.keys(this.sprites).length;
+    let loadedSounds = 0;
+    let requiredResourses = Object.keys(this.sprites).length;
+    requiredResourses += Object.keys(this.sounds).length;
 
-    // Checking up that all sprites are loaded, and only then run a game
-    const onSpriteLoad = () => {
+    // Checking up that all sprites and sounds are loaded, and only then run a game
+    let onResourceLoad = () => {
       ++loadedSprites;
-      if (loadedSprites >= requiredSprites) {
+      ++loadedSounds;
+      if (loadedSprites && loadedSounds >= requiredResourses) {
         callback();
       }
     };
+    this.preloadSprites(onResourceLoad);
+    this.preloadAudio(onResourceLoad);
+  },
 
+  preloadSprites(onResourceLoad) {
     for (let key in this.sprites) {
       this.sprites[key] = new Image();
       this.sprites[key].src = "img/" + key + ".png";
+      this.sprites[key].addEventListener("load", onResourceLoad);
+    }
+  },
 
-      // Checking up that all sprites are loaded, and only then run a game
-      this.sprites[key].addEventListener("load", onSpriteLoad);
+  preloadAudio(onResourceLoad) {
+    for (let key in this.sounds) {
+      this.sounds[key] = new Audio("sounds/" + key + ".mp3");
+      this.sounds[key].addEventListener("canplaythrough", onResourceLoad, { once: true });
     }
   },
 
@@ -94,7 +112,7 @@ const game = {
     ++this.score;
     // When the counter shows that blocks are ended, finish the game
     if (this.score >= this.blocks.length) {
-      this.endGame("You win!");
+      return this.endGame("victory", "You win!");
     }
   },
 
@@ -105,6 +123,7 @@ const game = {
         this.ball.bumpBlock(block);
         // When a ball has been colliding the block, add scores in the method addScore()
         this.addScore();
+        this.sounds.hit.play();
       }
     }
   },
@@ -112,6 +131,7 @@ const game = {
   collideBallAndPlatform() {
     if (this.ball.collide(this.platform)) {
       this.ball.bumpPlatform(this.platform);
+      this.sounds.bump.play();
     }
   },
 
@@ -146,7 +166,8 @@ const game = {
     });
   },
 
-  endGame(message) {
+  endGame(sound, message) {
+    game.sounds[sound].play();
     alert(message);
     this.running = false;
     window.location.reload();
@@ -215,14 +236,17 @@ game.ball = {
     if (ballLeftSide < canvasLeftSide) {
       this.x = 0;
       this.dx = this.velocity;
+      game.sounds.bump.play();
     } else if (ballRightSide > canvasRightSide) {
       this.x = canvasRightSide - this.width;
       this.dx = -this.velocity;
+      game.sounds.bump.play();
     } else if (ballTopSide < canvasTopSide) {
       this.y = 0;
       this.dy = this.velocity;
+      game.sounds.bump.play();
     } else if (ballBottomSide > canvasBottomSide) {
-      game.endGame("You lose!");
+      game.endGame("fail", "You lose!");
     }
   },
   // Bumping the ball off the block
