@@ -13,8 +13,8 @@ const game = {
   ball: null,
   score: 0,
   blocks: [],
-  rows: 1,
-  columns: 1,
+  rows: 4,
+  columns: 8,
   sprites: {
     background: null,
     ball: null,
@@ -29,8 +29,15 @@ const game = {
   },
   init() {
     this.context = document.querySelector("#mycanvas").getContext("2d");
+    this.setTextFont();
     this.setEvents();
   },
+
+  setTextFont() {
+    this.context.font = "28px Arial";
+    this.context.fillStyle = "#FFFFFF";
+  },
+
   setEvents() {
     window.addEventListener("keydown", e => {
       if (e.keyCode === KEYS.SPACE) {
@@ -145,6 +152,7 @@ const game = {
     this.context.drawImage(this.sprites.ball, 0, 0, this.ball.width, this.ball.height, this.ball.x, this.ball.y, this.ball.width, this.ball.height);
     this.context.drawImage(this.sprites.platform, this.platform.x, this.platform.y);
     this.renderBlocksArea();
+    this.context.fillText("Score: " + this.score, 70, 140);
   },
 
   runGame() {
