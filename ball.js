@@ -2,7 +2,7 @@ game.ball = {
   dx: 0,
   dy: 0,
   frame: 0,
-  velocity: 6,
+  velocity: 0,
   x: game.width / 2 - 20,
   y: game.height - 85,
   width: 40,

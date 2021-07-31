@@ -9,12 +9,13 @@ const game = {
   context: null,
   width: document.querySelector("#mycanvas").getAttribute("width"),
   height: document.querySelector("#mycanvas").getAttribute("height"),
+  level: 0,
   platform: null,
   ball: null,
   score: 0,
   blocks: [],
-  rows: 1,
-  columns: 1,
+  rows: 0,
+  columns: 0,
   sprites: {
     background: null,
     ball: null,
@@ -46,12 +47,33 @@ const game = {
     this.canvas.height = this.height;
   },
 
+  chooseLevel() {
+    do {
+      this.level = Number(prompt("Please, choose a level from 1 to 3", "1"));
+    } while (this.level < 1 || this.level > 3 || isFinite(this.level) !== true);
+    if (this.level === 1) {
+      this.rows = 4;
+      this.columns = 8;
+      this.ball.velocity = 4;
+    } else if (this.level === 2) {
+      this.rows = 5;
+      this.columns = 10;
+      this.ball.velocity = 6;
+    } else if (this.level === 3) {
+      this.rows = 6;
+      this.columns = 12;
+      this.ball.velocity = 8;
+      this.platform.velocity = 8;
+    };
+  },
+
   init() {
     this.canvas = document.getElementById("mycanvas");
     this.context = this.canvas.getContext("2d");
     this.initCanvasSize();
     this.setTextFont();
     this.setEvents();
+    this.chooseLevel();
   },
 
   setTextFont() {
@@ -71,6 +93,7 @@ const game = {
       this.platform.stop();
     });
   },
+
   preload(callback) {
     let loadedSprites = 0;
     let loadedSounds = 0;
