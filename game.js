@@ -13,8 +13,8 @@ const game = {
   ball: null,
   score: 0,
   blocks: [],
-  rows: 4,
-  columns: 8,
+  rows: 1,
+  columns: 1,
   sprites: {
     background: null,
     ball: null,
@@ -207,8 +207,10 @@ const game = {
   },
 
   endGameEvent(sound, message) {
-    game.sounds[sound].play();
+    let currentSound = game.sounds[sound]
+    currentSound.play();
     alert(message);
+    currentSound.load();
   },
 
   reloadGame() {
