@@ -1,0 +1,318 @@
+body {
+    background-color: #141414;
+    font-family: -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        "Helvetica Neue",
+        Arial,
+        "Noto Sans",
+        sans-serif,
+        "Apple Color Emoji",
+        "Segoe UI Emoji",
+        "Segoe UI Symbol",
+        "Noto Color Emoji";
+    font-size: 1.4rem;
+    line-height: 1.5;
+    color: #efefef;
+}
+
+*,
+*:before,
+*:after {
+    box-sizing: border-box;
+}
+
+/* ===================== Modal ===================== */
+
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(20, 20, 20, .4);
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal__content {
+    display: flex;
+    flex-direction: column;
+    height: 50vh;
+    width: 50vw;
+    padding: 20px;
+
+    border-radius: 12px;
+    background: linear-gradient(to bottom,
+            rgba(198, 53, 201, 0.6) 0%,
+            rgba(129, 30, 131, 0.6) 100%);
+    box-shadow: inset 10px 5px (98, 23, 99, .6),
+        0 5px 5px rgb(0 0 0 / 20%);
+
+    transform: scale(.5);
+    transition: all .4s linear;
+    overflow: auto;
+}
+
+.modal__content.active {
+    transform: scale(1);
+}
+
+.modal__greeting {
+    flex-basis: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    text-align: center;
+    letter-spacing: .1em;
+
+    opacity: .8;
+}
+
+.modal__greeting--main,
+.modal__greeting--secondary {
+    margin: 10px;
+}
+
+.modal__buttonsarea {
+    flex-basis: 50%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.modal__button {
+    display: inline-block;
+    padding: 10px 20px;
+
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #fafafa;
+    text-align: center;
+    text-transform: uppercase;
+    vertical-align: middle;
+
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    cursor: pointer;
+
+    transition: all .4s linear, opacity .4s linear;
+}
+
+.modal__button:disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+    opacity: .6;
+}
+
+.button__beginnerLvl {
+    color: #E8F5E9;
+    border-color: #43A047;
+    background: linear-gradient(to bottom, #81C784 0%, #66BB6A 100%);
+    box-shadow: inset 0 1px #c8e6c9,
+        0 1px 2px rgb(0 0 0 / 20%);
+}
+
+.button__beginnerLvl:hover,
+.button__beginnerLvl:focus {
+    border-color: #66BB6A;
+    background: linear-gradient(to bottom, #a5d6a7 0%, #81c784 100%);
+    box-shadow: inset 0 1px #e8f5e9,
+        0 2px 3px rgb(0 0 0 / 20%);
+
+    animation: pulseBeginner 1.6s infinite;
+    transform: scale(1.25);
+}
+
+@-webkit-keyframes pulseBeginner {
+    0% {
+        -webkit-box-shadow: 0 0 0 0 rgba(129, 199, 132, .6);
+    }
+
+    70% {
+        -webkit-box-shadow: 0 0 0 10px rgba(129, 199, 132, 0);
+    }
+
+    100% {
+        -webkit-box-shadow: inset 0 1px #e8f5e9,
+            0 2px 3px rgb(0 0 0 / 20%);
+    }
+}
+
+@keyframes pulseBeginner {
+    0% {
+        -moz-box-shadow: 0 0 0 0 rgba(129, 199, 132, .6);
+        box-shadow: 0 0 0 0 rgba(129, 199, 132, .6);
+    }
+
+    70% {
+        -moz-box-shadow: 0 0 0 10px rgba(129, 199, 132, 0);
+        box-shadow: 0 0 0 10px rgba(129, 199, 132, 0);
+    }
+
+    100% {
+        -moz-box-shadow: inset 0 1px #e8f5e9,
+            0 2px 3px rgb(0 0 0 / 20%);
+        box-shadow: inset 0 1px #e8f5e9,
+            0 2px 3px rgb(0 0 0 / 20%);
+    }
+}
+
+.button__beginnerLvl:active {
+    border-color: #388E3C;
+    color: #C8E6C9;
+    background: linear-gradient(to bottom, #66BB6A 0%, #43A047 100%);
+    box-shadow: inset 0 2px 2px #388e3c;
+}
+
+.button__gamerbeginnerLvl:disabled {
+    background: #A5D6A7;
+    border-color: #81C784;
+}
+
+.button__gamerLvl {
+    color: #e3f2fd;
+    border-color: #1e88e5;
+    background: linear-gradient(to bottom, #64b5f6 0%, #42a5f5 100%);
+    box-shadow: inset 0 1px #bbdefb,
+        0 1px 2px rgb(0 0 0 / 20%);
+}
+
+.button__gamerLvl:hover,
+.button__gamerLvl:focus {
+    border-color: #42a5f5;
+    background: linear-gradient(to bottom, #90caf9 0%, #65b5f6 100%);
+    box-shadow: inset 0 1px #e3f2fd,
+        0 2px 3px rgb(0 0 0 / 20%);
+
+    animation: pulseGamer 1.6s infinite;
+    transform: scale(1.25);
+}
+
+@-webkit-keyframes pulseGamer {
+    0% {
+        -webkit-box-shadow: 0 0 0 0 rgba(101, 181, 246, .6);
+    }
+
+    70% {
+        -webkit-box-shadow: 0 0 0 10px rgba(101, 181, 246, 0);
+    }
+
+    100% {
+        -webkit-box-shadow: inset 0 1px #e3f2fd,
+            0 2px 3px rgb(0 0 0 / 20%);
+    }
+}
+
+@keyframes pulseGamer {
+    0% {
+        -moz-box-shadow: 0 0 0 0 rgba(101, 181, 246, .6);
+        box-shadow: 0 0 0 0 rgba(101, 181, 246, .6);
+    }
+
+    70% {
+        -moz-box-shadow: 0 0 0 10px rgba(101, 181, 246, 0);
+        box-shadow: 0 0 0 10px rgba(101, 181, 246, 0);
+    }
+
+    100% {
+        -moz-box-shadow: inset 0 1px #e3f2fd,
+            0 2px 3px rgb(0 0 0 / 20%);
+        box-shadow: inset 0 1px #e3f2fd,
+            0 2px 3px rgb(0 0 0 / 20%);
+    }
+}
+
+.button__gamerLvl:active {
+    border-color: #1976d2;
+    color: #bbdefb;
+    background: linear-gradient(to bottom, #42a5f5 0%, #1e88e5 100%);
+    box-shadow: inset 0 2px 2px #1976d2;
+}
+
+.button__gamerLvl:disabled {
+    background: #90caf9;
+    border-color: #64b5f6;
+}
+
+.button__professionalLvl {
+    color: #FFF3E0;
+    border-color: #FB8C00;
+    background: linear-gradient(to bottom, #FFB74D 0%, #FFA726 100%);
+    box-shadow: inset 0 1px #ffe0b2,
+        0 1px 2px rgb(0 0 0 / 20%);
+}
+
+.button__professionalLvl:hover,
+.button__professionalLvl:focus {
+    border-color: #FFA726;
+    background: linear-gradient(to bottom, #FFCC80 0%, #ffb74d 100%);
+    box-shadow: inset 0 1px #fff3e0,
+        0 2px 3px rgb(0 0 0 / 20%);
+
+    animation: pulseProfessional 1.6s infinite;
+    transform: scale(1.25);
+}
+
+@-webkit-keyframes pulseProfessional {
+    0% {
+        -webkit-box-shadow: 0 0 0 0 rgba(255, 183, 77, .6);
+    }
+
+    70% {
+        -webkit-box-shadow: 0 0 0 10px rgba(255, 183, 77, 0);
+    }
+
+    100% {
+        -webkit-box-shadow: inset 0 1px #fff3e0,
+            0 2px 3px rgb(0 0 0 / 20%);
+    }
+}
+
+@keyframes pulseProfessional {
+    0% {
+        -moz-box-shadow: 0 0 0 0 rgba(255, 183, 77, .6);
+        box-shadow: 0 0 0 0 rgba(255, 183, 77, .6);
+    }
+
+    70% {
+        -moz-box-shadow: 0 0 0 10px rgba(255, 183, 77, 0);
+        box-shadow: 0 0 0 10px rgba(255, 183, 77, 0);
+    }
+
+    100% {
+        -moz-box-shadow: inset 0 1px #fff3e0,
+            0 2px 3px rgb(0 0 0 / 20%);
+        box-shadow: inset 0 1px #fff3e0,
+            0 2px 3px rgb(0 0 0 / 20%);
+    }
+}
+
+.button__professionalLvl:active {
+    border-color: #F57C00;
+    color: #FFE0B2;
+    background: linear-gradient(to bottom, #FFA726 0%, #FB8C00 100%);
+    box-shadow: inset 0 2px 2px #f57c00;
+}
+
+.button__professionalLvl:disabled {
+    background: #FFCC80;
+    border-color: #FFB74D;
+}
+
+
+/* ================== End of Modal ================== */

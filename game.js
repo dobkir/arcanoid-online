@@ -1,3 +1,5 @@
+const CANVAS = document.querySelector("#mycanvas");
+
 const KEYS = {
   LEFT: 37,
   RIGHT: 39,
@@ -7,9 +9,9 @@ const KEYS = {
 const game = {
   running: true,
   context: null,
-  width: document.querySelector("#mycanvas").getAttribute("width"),
-  height: document.querySelector("#mycanvas").getAttribute("height"),
-  level: 0,
+  width: CANVAS.getAttribute("width"),
+  height: CANVAS.getAttribute("height"),
+  level: null,
   platform: null,
   ball: null,
   score: 0,
@@ -47,24 +49,42 @@ const game = {
     this.canvas.height = this.height;
   },
 
-  chooseLevel() {
-    do {
-      this.level = Number(prompt("Please, choose a level from 1 to 3", "1"));
-    } while (this.level < 1 || this.level > 3 || isFinite(this.level) !== true);
-    if (this.level === 1) {
+  setLevel() {
+    function chooseLevel(event) {
+      if (event.target.nodeName === "BUTTON") {
+        game.level = event.target.value;
+        game.init();
+        game.createBlocksArea();
+        document.body.removeEventListener("click", chooseLevel);
+      };
+    };
+    !this.level && document.body.addEventListener("click", chooseLevel);
+  },
+
+  setLevelSettings() {
+    this.setLevel();
+    !this.level && this.modalChoosingLevel.modalOpen();
+
+    if (this.level === "beginner") {
       this.rows = 4;
       this.columns = 8;
       this.ball.velocity = 4;
-    } else if (this.level === 2) {
+      this.modalChoosingLevel.modalClose();
+    } else if (this.level === "gamer") {
       this.rows = 5;
       this.columns = 10;
       this.ball.velocity = 6;
-    } else if (this.level === 3) {
-      this.rows = 6;
-      this.columns = 12;
+      this.modalChoosingLevel.modalClose();
+    } else if (this.level === "professional") {
+      this.rows = 7;
+      this.columns = 11;
       this.ball.velocity = 8;
       this.platform.velocity = 8;
-    };
+      this.modalChoosingLevel.modalClose();
+    }
+    // do {
+    //   this.level = Number(prompt("Please, choose a level from 1 to 3", "1"));
+    // } while (this.level < 1 || this.level > 3 || isFinite(this.level) !== true);
   },
 
   init() {
@@ -73,7 +93,7 @@ const game = {
     this.initCanvasSize();
     this.setTextFont();
     this.setEvents();
-    this.chooseLevel();
+    this.setLevelSettings();
   },
 
   setTextFont() {
@@ -224,11 +244,6 @@ const game = {
     });
   },
 
-  handler(e) {
-    e.stopPropagation();
-    e.preventDefault();
-  },
-
   endGameEvent(sound, message) {
     let currentSound = game.sounds[sound]
     currentSound.play();
@@ -245,8 +260,6 @@ const game = {
     this.endGameEvent(sound, message);
 
     this.reloadGame();
-
-    this.handler();
   },
 
   random(min, max) {
