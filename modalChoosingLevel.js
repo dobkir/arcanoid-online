@@ -36,7 +36,7 @@ game.modalChoosingLevel = {
     `)
   },
 
-  modalOpen() {
+  openModal() {
     this.disableScroll();
     this.modal = document.createElement("div");
     this.modal.classList.add("modal");
@@ -47,7 +47,7 @@ game.modalChoosingLevel = {
     this.modalContent.classList.add("active");
   },
 
-  modalClose() {
+  closeModal() {
     this.modalContent.classList.remove("active")
     this.modal.classList.remove("active");
     this.modal.removeChild(this.modalContent);

@@ -49,12 +49,36 @@ const game = {
     this.canvas.height = this.height;
   },
 
+  hideMouse() {
+    // The disappearance of the cursor if it is not used for 3 seconds
+    // (after the click by button with the difficulty level choosing)
+    let mouseTimer = null, cursorVisible = true;
+
+    function disappearCursor() {
+      mouseTimer = null;
+      document.body.style.cursor = "none";
+      cursorVisible = false;
+    }
+
+    document.onmousemove = function () {
+      if (mouseTimer) {
+        window.clearTimeout(mouseTimer);
+      }
+      if (!cursorVisible) {
+        document.body.style.cursor = "default";
+        cursorVisible = true;
+      }
+      mouseTimer = window.setTimeout(disappearCursor, 3000);
+    };
+  },
+
   setLevel() {
     function chooseLevel(event) {
       if (event.target.nodeName === "BUTTON") {
         game.level = event.target.value;
         game.init();
         game.createBlocksArea();
+        game.hideMouse();
         document.body.removeEventListener("click", chooseLevel);
       };
     };
@@ -63,24 +87,24 @@ const game = {
 
   setLevelSettings() {
     this.setLevel();
-    !this.level && this.modalChoosingLevel.modalOpen();
+    !this.level && this.modalChoosingLevel.openModal();
 
     if (this.level === "beginner") {
       this.rows = 4;
       this.columns = 8;
       this.ball.velocity = 4;
-      this.modalChoosingLevel.modalClose();
+      this.modalChoosingLevel.closeModal();
     } else if (this.level === "gamer") {
       this.rows = 5;
       this.columns = 10;
       this.ball.velocity = 6;
-      this.modalChoosingLevel.modalClose();
+      this.modalChoosingLevel.closeModal();
     } else if (this.level === "professional") {
       this.rows = 7;
       this.columns = 11;
       this.ball.velocity = 8;
       this.platform.velocity = 8;
-      this.modalChoosingLevel.modalClose();
+      this.modalChoosingLevel.closeModal();
     }
     // do {
     //   this.level = Number(prompt("Please, choose a level from 1 to 3", "1"));
@@ -92,8 +116,9 @@ const game = {
     this.context = this.canvas.getContext("2d");
     this.initCanvasSize();
     this.setTextFont();
-    this.setEvents();
+    this.level && this.setEvents();
     this.setLevelSettings();
+    this.hideMouse();
   },
 
   setTextFont() {
