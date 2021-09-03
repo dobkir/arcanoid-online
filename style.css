@@ -12,8 +12,8 @@ body {
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         "Noto Color Emoji";
-    font-size: 1.4rem;
-    line-height: 1.5;
+    font-size: 110%;
+    line-height: 240%;
     color: #efefef;
 }
 
@@ -31,7 +31,7 @@ body {
     align-items: center;
     height: 100vh;
     width: 100vw;
-    background-color: rgba(20, 20, 20, .4);
+    background-color: rgba(34, 6, 112, 0.3);
     position: fixed;
     top: 0;
     left: 0;
@@ -48,9 +48,9 @@ body {
 .modal__content {
     display: flex;
     flex-direction: column;
-    height: 50vh;
-    width: 50vw;
-    padding: 20px;
+    height: auto;
+    width: 40vw;
+    padding: 2%;
 
     border-radius: 12px;
     background: linear-gradient(to bottom,
@@ -82,7 +82,7 @@ body {
 
 .modal__greeting--main,
 .modal__greeting--secondary {
-    margin: 10px;
+    margin: 0 0 20px;
 }
 
 .modal__buttonsarea {
@@ -95,9 +95,10 @@ body {
 
 .modal__button {
     display: inline-block;
-    padding: 10px 20px;
+    margin: 1%;
+    padding: 2% 4%;
 
-    font-size: 1.4rem;
+    font-size: 110%;
     font-weight: 600;
     color: #fafafa;
     text-align: center;
@@ -133,6 +134,7 @@ body {
     background: linear-gradient(to bottom, #a5d6a7 0%, #81c784 100%);
     box-shadow: inset 0 1px #e8f5e9,
         0 2px 3px rgb(0 0 0 / 20%);
+    outline: transparent;
 
     animation: pulseBeginner 1.6s infinite;
     transform: scale(1.25);
@@ -198,6 +200,7 @@ body {
     background: linear-gradient(to bottom, #90caf9 0%, #65b5f6 100%);
     box-shadow: inset 0 1px #e3f2fd,
         0 2px 3px rgb(0 0 0 / 20%);
+    outline: transparent;
 
     animation: pulseGamer 1.6s infinite;
     transform: scale(1.25);
@@ -263,6 +266,7 @@ body {
     background: linear-gradient(to bottom, #FFCC80 0%, #ffb74d 100%);
     box-shadow: inset 0 1px #fff3e0,
         0 2px 3px rgb(0 0 0 / 20%);
+    outline: transparent;
 
     animation: pulseProfessional 1.6s infinite;
     transform: scale(1.25);

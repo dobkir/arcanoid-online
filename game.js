@@ -36,22 +36,27 @@ const game = {
     let realHeight = window.innerHeight * window.devicePixelRatio;
     let maxHeight = this.height;
     let maxWidth = this.width;
-    // Always fully fit the width
-    // It means that the final width is maxWidth, then the proportion is fair:
-    // realWidth / realHeight
-    // maxWidth / resultHeight
-    // resultHeight = maxWidth * realHeight / realWidth
-    // Round down and cut off everything above maxWidth
+    /* 
+     *  Always fully fit the width
+     *  It means that the final width is maxWidth, then the proportion is fair:
+     *  realWidth / realHeight
+     *  maxWidth / resultHeight
+     *  resultHeight = maxWidth * realHeight / realWidth
+     *  Round down and cut off everything above maxWidth
+     */
     this.height = Math.min(Math.floor(maxWidth * realHeight / realWidth), maxHeight);
     // responsive variant
     // this.height = Math.floor(maxWidth * realHeight / realWidth);
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
+    CANVAS.width = this.width;
+    CANVAS.height = this.height;
+    CANVAS.style = "background: url(img/universe_wallpapers.jpg) no-repeat 0 0 / cover;";
   },
 
   hideMouse() {
-    // The disappearance of the cursor if it is not used for 3 seconds
-    // (after the click by button with the difficulty level choosing)
+    /*
+     *  The disappearance of the cursor if it is not used for 3 seconds
+     *  (after the click by button with the difficulty level choosing) 
+     */
     let mouseTimer = null, cursorVisible = true;
 
     function disappearCursor() {
@@ -75,14 +80,12 @@ const game = {
   setLevel() {
     function chooseLevel(event) {
       if (event.target.nodeName === "BUTTON") {
-        game.level = event.target.value;
-        game.init();
-        game.createBlocksArea();
-        game.hideMouse();
+        this.level = event.target.value;
+        this.startGame();
         document.body.removeEventListener("click", chooseLevel);
       };
     };
-    !this.level && document.body.addEventListener("click", chooseLevel);
+    !this.level && document.body.addEventListener("click", chooseLevel.bind(game));
   },
 
   setLevelSettings() {
@@ -106,18 +109,15 @@ const game = {
       this.platform.velocity = 8;
       this.modalChoosingLevel.closeModal();
     }
-    // do {
-    //   this.level = Number(prompt("Please, choose a level from 1 to 3", "1"));
-    // } while (this.level < 1 || this.level > 3 || isFinite(this.level) !== true);
+    console.log(this.level);
   },
 
   init() {
-    this.canvas = document.getElementById("mycanvas");
-    this.context = this.canvas.getContext("2d");
+    this.setLevelSettings();
+    this.context = CANVAS.getContext("2d");
     this.initCanvasSize();
     this.setTextFont();
     this.level && this.setEvents();
-    this.setLevelSettings();
     this.hideMouse();
   },
 
@@ -160,7 +160,7 @@ const game = {
   preloadSprites(onResourceLoad) {
     for (let key in this.sprites) {
       this.sprites[key] = new Image();
-      this.sprites[key].src = "img/" + key + ".png";
+      this.sprites[key].src = "img/" + key + "_" + this.level + ".png";
       this.sprites[key].addEventListener("load", onResourceLoad);
     }
   },
@@ -182,9 +182,9 @@ const game = {
       for (let column = 0; column < this.columns; column++) {
         this.blocks.push({
           active: true,
-          width: 111,
-          height: 39,
-          x: 113 * column + ((this.width - 113 * this.columns) / 2),
+          width: 112,
+          height: 40,
+          x: 114 * column + ((this.width - 114 * this.columns) / 2),
           y: 42 * row + ((this.height - 42 * this.rows) / 2)
         });
       }
@@ -270,7 +270,7 @@ const game = {
   },
 
   endGameEvent(sound, message) {
-    let currentSound = game.sounds[sound]
+    let currentSound = this.sounds[sound]
     currentSound.play();
     alert(message);
     currentSound.load();
@@ -283,7 +283,6 @@ const game = {
 
   endGame(sound, message) {
     this.endGameEvent(sound, message);
-
     this.reloadGame();
   },
 
@@ -295,5 +294,5 @@ const game = {
 
 
 window.addEventListener("load", () => {
-  game.startGame();
+  game.init();
 });
