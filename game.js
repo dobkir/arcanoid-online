@@ -3,11 +3,14 @@ const CANVAS = document.querySelector("#mycanvas");
 const KEYS = {
   LEFT: 37,
   RIGHT: 39,
-  SPACE: 32
+  SPACE: 32,
+  P: 80,
+  O: 79
 };
 
 const game = {
   running: true,
+  pause: false,
   context: null,
   width: CANVAS.getAttribute("width"),
   height: CANVAS.getAttribute("height"),
@@ -90,26 +93,25 @@ const game = {
 
   setLevelSettings() {
     this.setLevel();
-    !this.level && this.modalChoosingLevel.openModal();
+    !this.level && this.modalWindow.openModal(this.modalChoosingLevel);
 
     if (this.level === "beginner") {
       this.rows = 4;
       this.columns = 8;
       this.ball.velocity = 4;
-      this.modalChoosingLevel.closeModal();
+      this.modalWindow.closeModal();
     } else if (this.level === "gamer") {
       this.rows = 5;
       this.columns = 10;
       this.ball.velocity = 6;
-      this.modalChoosingLevel.closeModal();
+      this.modalWindow.closeModal();
     } else if (this.level === "professional") {
       this.rows = 7;
       this.columns = 11;
       this.ball.velocity = 8;
       this.platform.velocity = 8;
-      this.modalChoosingLevel.closeModal();
+      this.modalWindow.closeModal();
     }
-    console.log(this.level);
   },
 
   init() {
@@ -136,6 +138,13 @@ const game = {
     });
     window.addEventListener("keyup", e => {
       this.platform.stop();
+    });
+    window.addEventListener("keydown", e => {
+      if (!this.pause && e.keyCode === KEYS.P) {
+        this.pausedGame();
+      } else if (this.pause && e.keyCode === KEYS.P) {
+        this.unpausedGame();
+      }
     });
   },
 
@@ -267,6 +276,19 @@ const game = {
       this.createBlocksArea();
       this.runGame();
     });
+  },
+
+  pausedGame() {
+    this.running = false;
+    this.pause = true;
+    this.modalWindow.openModal(this.modalGamePaused);
+  },
+
+  unpausedGame() {
+    this.modalWindow.closeModal();
+    this.pause = false;
+    this.running = true;
+    this.runGame();
   },
 
   endGameEvent(sound, message) {
