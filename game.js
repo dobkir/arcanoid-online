@@ -1,11 +1,11 @@
 const CANVAS = document.querySelector("#mycanvas");
 
 const KEYS = {
+  ESCAPE: 27,
+  SPACE: 32,
   LEFT: 37,
   RIGHT: 39,
-  SPACE: 32,
-  P: 80,
-  O: 79
+  P: 80
 };
 
 const game = {
@@ -129,6 +129,7 @@ const game = {
   },
 
   setEvents() {
+    // Moving the platform
     window.addEventListener("keydown", e => {
       if (e.keyCode === KEYS.SPACE) {
         this.platform.startBall();
@@ -136,13 +137,15 @@ const game = {
         this.platform.start(e.keyCode);
       }
     });
+    // Stop the platform
     window.addEventListener("keyup", e => {
       this.platform.stop();
     });
+    // Paused and unpaused the game
     window.addEventListener("keydown", e => {
       if (!this.pause && e.keyCode === KEYS.P) {
         this.pausedGame();
-      } else if (this.pause && e.keyCode === KEYS.P) {
+      } else if (this.pause && e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE) {
         this.unpausedGame();
       }
     });
