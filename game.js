@@ -82,7 +82,7 @@ const game = {
 
   setLevel() {
     function chooseLevel(event) {
-      if (event.target.nodeName === "BUTTON") {
+      if (event.target.nodeName === "BUTTON" && event.target.value !== "closeModal") {
         this.level = event.target.value;
         this.startGame();
         document.body.removeEventListener("click", chooseLevel);
@@ -116,11 +116,11 @@ const game = {
 
   init() {
     this.setLevelSettings();
+    this.hideMouse();
     this.context = CANVAS.getContext("2d");
     this.initCanvasSize();
     this.setTextFont();
     this.level && this.setEvents();
-    this.hideMouse();
   },
 
   setTextFont() {
@@ -223,9 +223,13 @@ const game = {
 
   addScore() {
     ++this.score;
+
     // When the counter shows that blocks are ended, finish the game
+    // ========================= WINNING ========================= //
     if (this.score >= this.blocks.length) {
-      const victory = this.endGame("victory", "You win!");
+      this.sounds.bump.pause();
+      this.sounds.victory.play();
+      const victory = this.endGame(game.modalWinning);
       return victory;
     }
   },
@@ -294,11 +298,12 @@ const game = {
     this.runGame();
   },
 
-  endGameEvent(sound, message) {
-    let currentSound = this.sounds[sound]
-    currentSound.play();
-    alert(message);
-    currentSound.load();
+  endGame(messageType) {
+    if (!this.modalWindow.modal && this.running) {
+      this.modalWindow.openModal(messageType);
+      this.running = false;
+      document.body.addEventListener("click", this.confirmEndGame.bind(game));
+    }
   },
 
   reloadGame() {
@@ -306,9 +311,12 @@ const game = {
     window.location.reload();
   },
 
-  endGame(sound, message) {
-    this.endGameEvent(sound, message);
-    this.reloadGame();
+  confirmEndGame(event) {
+    if (event.target.nodeName === "BUTTON" && event.target.value === "closeModal") {
+      this.modalWindow.closeModal();
+      document.body.removeEventListener("click", this.confirmEndGame);
+      this.reloadGame();
+    }
   },
 
   random(min, max) {
@@ -316,7 +324,6 @@ const game = {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 };
-
 
 window.addEventListener("load", () => {
   game.init();

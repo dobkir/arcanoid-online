@@ -26,8 +26,8 @@ game.modalWindow = {
     this.modal.classList.remove("active");
     this.modal.removeChild(this.modalContent);
     this.modal.remove();
+    this.modal = null;
     this.enableScroll();
-    ;
   },
 
   // =========  Blocked and unblocked scroll of the page  ========= //

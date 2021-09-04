@@ -75,7 +75,11 @@ game.ball = {
       this.dy = this.velocity;
       game.sounds.bump.play();
     } else if (ballBottomSide > canvasBottomSide) {
-      const fail = game.endGame("fail", "You lose!");
+      // ========================= LOSING ========================= //
+      this.velocity = 0;
+      game.sounds.bump.pause();
+      game.sounds.fail.play();
+      const fail = game.endGame(game.modalLosing);
       return fail;
     }
   },

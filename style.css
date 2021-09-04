@@ -23,6 +23,11 @@ body {
     box-sizing: border-box;
 }
 
+.nowrap {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
 /* ===================== Modal ===================== */
 
 .modal {
@@ -37,13 +42,17 @@ body {
     left: 0;
     opacity: 0;
     pointer-events: none;
-    transition: .5s;
+    transition: all .5s;
 }
 
 .modal.active {
     opacity: 1;
     pointer-events: all;
 }
+
+
+
+/* =================== /Modal content =================== */
 
 .modal__content {
     display: flex;
@@ -85,6 +94,47 @@ body {
     margin: 0 0 20px;
 }
 
+.flashing__message {
+    font-weight: bold;
+
+    -webkit-animation: flashing__message 3s linear infinite;
+    animation: flashing__message 3s linear infinite;
+}
+
+@-webkit-keyframes flashing__message {
+    0% {
+        color: rgb(239, 239, 239);
+    }
+
+    50% {
+        color: rgb(198, 53, 201);
+    }
+
+    100% {
+        color: rgb(239, 239, 239);
+    }
+}
+
+@keyframes flashing__message {
+    0% {
+        color: rgb(239, 239, 239);
+    }
+
+    50% {
+        color: rgb(198, 53, 201);
+    }
+
+    100% {
+        color: rgb(239, 239, 239);
+    }
+}
+
+/* =================== /Modal content =================== */
+
+
+
+/* ======================= Buttons ======================= */
+
 .modal__buttonsarea {
     flex-basis: 50%;
     display: flex;
@@ -111,6 +161,7 @@ body {
     cursor: pointer;
 
     transition: all .4s linear, opacity .4s linear;
+    box-sizing: border-box;
 }
 
 .modal__button:disabled {
@@ -120,7 +171,7 @@ body {
     opacity: .6;
 }
 
-.button__beginnerLvl {
+.button__green {
     color: #E8F5E9;
     border-color: #43A047;
     background: linear-gradient(to bottom, #81C784 0%, #66BB6A 100%);
@@ -128,8 +179,8 @@ body {
         0 1px 2px rgb(0 0 0 / 20%);
 }
 
-.button__beginnerLvl:hover,
-.button__beginnerLvl:focus {
+.button__green:hover,
+.button__green:focus {
     border-color: #66BB6A;
     background: linear-gradient(to bottom, #a5d6a7 0%, #81c784 100%);
     box-shadow: inset 0 1px #e8f5e9,
@@ -137,7 +188,7 @@ body {
     outline: transparent;
 
     animation: pulseBeginner 1.6s infinite;
-    transform: scale(1.25);
+    transform: scale(1.15);
 }
 
 @-webkit-keyframes pulseBeginner {
@@ -174,19 +225,19 @@ body {
     }
 }
 
-.button__beginnerLvl:active {
+.button__green:active {
     border-color: #388E3C;
     color: #C8E6C9;
     background: linear-gradient(to bottom, #66BB6A 0%, #43A047 100%);
     box-shadow: inset 0 2px 2px #388e3c;
 }
 
-.button__gamerbeginnerLvl:disabled {
+.button__green:disabled {
     background: #A5D6A7;
     border-color: #81C784;
 }
 
-.button__gamerLvl {
+.button__blue {
     color: #e3f2fd;
     border-color: #1e88e5;
     background: linear-gradient(to bottom, #64b5f6 0%, #42a5f5 100%);
@@ -194,8 +245,8 @@ body {
         0 1px 2px rgb(0 0 0 / 20%);
 }
 
-.button__gamerLvl:hover,
-.button__gamerLvl:focus {
+.button__blue:hover,
+.button__blue:focus {
     border-color: #42a5f5;
     background: linear-gradient(to bottom, #90caf9 0%, #65b5f6 100%);
     box-shadow: inset 0 1px #e3f2fd,
@@ -203,7 +254,7 @@ body {
     outline: transparent;
 
     animation: pulseGamer 1.6s infinite;
-    transform: scale(1.25);
+    transform: scale(1.15);
 }
 
 @-webkit-keyframes pulseGamer {
@@ -240,19 +291,19 @@ body {
     }
 }
 
-.button__gamerLvl:active {
+.button__blue:active {
     border-color: #1976d2;
     color: #bbdefb;
     background: linear-gradient(to bottom, #42a5f5 0%, #1e88e5 100%);
     box-shadow: inset 0 2px 2px #1976d2;
 }
 
-.button__gamerLvl:disabled {
+.button__blue:disabled {
     background: #90caf9;
     border-color: #64b5f6;
 }
 
-.button__professionalLvl {
+.button__orange {
     color: #FFF3E0;
     border-color: #FB8C00;
     background: linear-gradient(to bottom, #FFB74D 0%, #FFA726 100%);
@@ -260,8 +311,8 @@ body {
         0 1px 2px rgb(0 0 0 / 20%);
 }
 
-.button__professionalLvl:hover,
-.button__professionalLvl:focus {
+.button__orange:hover,
+.button__orange:focus {
     border-color: #FFA726;
     background: linear-gradient(to bottom, #FFCC80 0%, #ffb74d 100%);
     box-shadow: inset 0 1px #fff3e0,
@@ -269,7 +320,7 @@ body {
     outline: transparent;
 
     animation: pulseProfessional 1.6s infinite;
-    transform: scale(1.25);
+    transform: scale(1.15);
 }
 
 @-webkit-keyframes pulseProfessional {
@@ -306,17 +357,18 @@ body {
     }
 }
 
-.button__professionalLvl:active {
+.button__orange:active {
     border-color: #F57C00;
     color: #FFE0B2;
     background: linear-gradient(to bottom, #FFA726 0%, #FB8C00 100%);
     box-shadow: inset 0 2px 2px #f57c00;
 }
 
-.button__professionalLvl:disabled {
+.button__orange:disabled {
     background: #FFCC80;
     border-color: #FFB74D;
 }
 
+/* ======================= /Buttons ======================= */
 
 /* ================== End of Modal ================== */
