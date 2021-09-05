@@ -1,7 +1,7 @@
 game.modalChoosingLevel =
   `
     <div class="modal__greeting">
-      <h1 class="modal__greeting--main">Welcome to Arkanoid!</h1>
+      <h1 class="modal__greeting--main flashing__message">Welcome to Arkanoid!</h1>
       <h2 class="modal__greeting--secondary">Choose your level to start the game</h2>
     </div>
     <div class="modal__buttonsarea">

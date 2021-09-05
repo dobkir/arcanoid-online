@@ -57,8 +57,8 @@ const game = {
 
   hideMouse() {
     /*
-     *  The disappearance of the cursor if it is not used for 3 seconds
-     *  (after the click by button with the difficulty level choosing) 
+     *  The disappearance of the cursor if it is not used 
+     *  for 3 seconds after the last click or moving
      */
     let mouseTimer = null, cursorVisible = true;
 
@@ -82,7 +82,7 @@ const game = {
 
   setLevel() {
     function chooseLevel(event) {
-      if (event.target.nodeName === "BUTTON" && event.target.value !== "closeModal") {
+      if (event.target.name === "modalChooseButton") {
         this.level = event.target.value;
         this.startGame();
         document.body.removeEventListener("click", chooseLevel);
@@ -143,9 +143,9 @@ const game = {
     });
     // Paused and unpaused the game
     window.addEventListener("keydown", e => {
-      if (!this.pause && e.keyCode === KEYS.P) {
+      if (!this.pause && !this.modalWindow.modal && e.keyCode === KEYS.P) {
         this.pausedGame();
-      } else if (this.pause && e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE) {
+      } else if (this.pause && this.modalWindow.modal && e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE) {
         this.unpausedGame();
       }
     });
@@ -298,12 +298,49 @@ const game = {
     this.runGame();
   },
 
+  clearParameters() {
+    this.platform = game.platform;
+    this.ball = game.ball;
+    this.score = 0;
+    this.blocks = [];
+    this.rows = 0;
+    this.columns = 0;
+    this.ball.velocity = 0;
+  },
+
   endGame(messageType) {
     if (!this.modalWindow.modal && this.running) {
       this.modalWindow.openModal(messageType);
       this.running = false;
+
       document.body.addEventListener("click", this.confirmEndGame.bind(game));
     }
+  },
+
+  restartLevel() {
+    this.clearParameters();
+
+    if (this.level === "beginner") {
+      this.rows = 4;
+      this.columns = 8;
+      this.ball.velocity = 4;
+    } else if (this.level === "gamer") {
+      this.rows = 5;
+      this.columns = 10;
+      this.ball.velocity = 6;
+    } else if (this.level === "professional") {
+      this.rows = 7;
+      this.columns = 11;
+      this.ball.velocity = 8;
+      this.platform.velocity = 8;
+    }
+
+    this.preload(() => {
+      this.createBlocksArea();
+      this.runGame();
+    });
+
+    this.running = true;
   },
 
   reloadGame() {
@@ -312,11 +349,13 @@ const game = {
   },
 
   confirmEndGame(event) {
-    if (event.target.nodeName === "BUTTON" && event.target.value === "closeModal") {
-      this.modalWindow.closeModal();
-      document.body.removeEventListener("click", this.confirmEndGame);
+    if (event.target.value === "mainMenu") {
       this.reloadGame();
+    } else if (event.target.value === "restartLevel") {
+      this.modalWindow.closeModal();
+      this.restartLevel();
     }
+    document.body.removeEventListener("click", this.confirmEndGame);
   },
 
   random(min, max) {

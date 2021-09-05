@@ -6,10 +6,10 @@ game.modalWinning =
     
     <div class="modal__buttonsarea">
       <button
-      class="modal__button button__green nowrap"
+      class="modal__button button__orange nowrap"
       type="button"
-      name="closeModal"
-      value="closeModal">
+      name="mainMenu"
+      value="mainMenu">
         Back to menu
       </button>
     </div>
