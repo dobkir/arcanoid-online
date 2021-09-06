@@ -1,5 +1,7 @@
 body {
-    background-color: #141414;
+    margin: 0;
+    padding: 0;
+
     font-family: -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
@@ -15,6 +17,48 @@ body {
     font-size: 110%;
     line-height: 240%;
     color: #efefef;
+    vertical-align: middle;
+
+    background-color: #141414;
+}
+
+.canvas {
+    width: 100%;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+}
+
+.help {
+    width: 64px;
+    height: 64px;
+
+    background: url(img/help.png) no-repeat 0 0 / cover;
+    box-shadow: inset 10px 5px (98, 23, 99, .6),
+        0 5px 5px rgb(0 0 0 / 20%);
+    cursor: pointer;
+
+    position: absolute;
+    top: 5%;
+    right: 5%;
+
+    z-index: 1;
+}
+
+.help:hover,
+.help:focus {
+    background: url(img/help_focus.png) no-repeat 0 0 / cover;
+}
+
+.help__list {
+    list-style: square;
+    text-align: left;
 }
 
 *,

@@ -1,10 +1,12 @@
-const CANVAS = document.querySelector("#mycanvas");
+const CANVAS = document.querySelector(".canvas");
+const HELP = document.querySelector(".help");
 
 const KEYS = {
   ESCAPE: 27,
   SPACE: 32,
   LEFT: 37,
   RIGHT: 39,
+  H: 72,
   P: 80
 };
 
@@ -121,6 +123,8 @@ const game = {
     this.initCanvasSize();
     this.setTextFont();
     this.level && this.setEvents();
+    // Open Help by clicking on "?" icon
+    HELP.addEventListener("click", this.clickToOpenHelp.bind(game));
   },
 
   setTextFont() {
@@ -145,8 +149,16 @@ const game = {
     window.addEventListener("keydown", e => {
       if (!this.pause && !this.modalWindow.modal && e.keyCode === KEYS.P) {
         this.pausedGame();
-      } else if (this.pause && this.modalWindow.modal && e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE) {
+      } else if (this.pause && this.modalWindow.modal && (e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE)) {
         this.unpausedGame();
+      }
+    });
+    // Open and close Help Tutorial
+    window.addEventListener("keydown", e => {
+      if (!this.pause && !this.modalWindow.modal && e.keyCode === KEYS.H) {
+        this.openHelpTutorial();
+      } else if (this.pause && this.modalWindow.modal && (e.keyCode === KEYS.H || e.keyCode === KEYS.ESCAPE)) {
+        this.closeHelpTutorial();
       }
     });
   },
@@ -229,7 +241,7 @@ const game = {
     if (this.score >= this.blocks.length) {
       this.sounds.bump.pause();
       this.sounds.victory.play();
-      const victory = this.endGame(game.modalWinning);
+      const victory = this.endGame(this.modalWinning);
       return victory;
     }
   },
@@ -277,6 +289,20 @@ const game = {
     }
   },
 
+  openHelpTutorial() {
+    this.running = false;
+    this.pause = true;
+    this.modalWindow.openModal(this.modalHelpTutorial);
+    document.body.addEventListener("click", this.closeModalWindow.bind(game));
+  },
+
+  closeHelpTutorial() {
+    this.modalWindow.closeModal();
+    this.pause = false;
+    this.running = true;
+    this.runGame();
+  },
+
   startGame() {
     this.init();
     this.preload(() => {
@@ -305,7 +331,6 @@ const game = {
     this.blocks = [];
     this.rows = 0;
     this.columns = 0;
-    this.ball.velocity = 0;
   },
 
   endGame(messageType) {
@@ -356,6 +381,23 @@ const game = {
       this.restartLevel();
     }
     document.body.removeEventListener("click", this.confirmEndGame);
+  },
+
+  closeModalWindow(event) {
+    if (event.target.value === "closeModal") {
+      this.modalWindow.closeModal();
+      this.pause = false;
+      this.running = true;
+      this.runGame();
+    }
+    document.body.removeEventListener("click", this.closeModalWindow);
+  },
+
+  clickToOpenHelp(event) {
+    if (!this.pause && !this.modalWindow.modal && event.target.classList.contains("help")) {
+      this.openHelpTutorial();
+    }
+    document.body.removeEventListener("click", this.clickToOpenHelp);
   },
 
   random(min, max) {
