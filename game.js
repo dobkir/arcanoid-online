@@ -126,6 +126,7 @@ const game = {
     this.level && this.setEvents();
     // Open Help by clicking on "?" icon
     HELP.addEventListener("click", this.clickToOpenHelp.bind(game));
+    this.keysHelpModal();
   },
 
   setTextFont() {
@@ -150,23 +151,11 @@ const game = {
     window.addEventListener("keydown", e => {
       if (!this.pause && !this.modalWindow.content && e.keyCode === KEYS.P) {
         this.pausedGame();
-        console.log(this.modalWindow.content);
       } else if (this.pause && this.modalWindow.content && (e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE)) {
         this.unpausedGame();
       }
     });
-    // Open and close Help Tutorial
-    window.addEventListener("keydown", e => {
-      if (!this.pause && !this.modalWindow.content && e.keyCode === KEYS.H) {
-        this.openHelpTutorial();
-      } else if ((this.modalWindow.content === this.modalGamePaused) && e.keyCode === KEYS.H) {
-        this.modalWindow.closeModal();
-        this.modalWindow.content = this.modalHelpTutorial;
-        this.modalWindow.openModal();
-      } else if ((this.modalWindow.content === this.modalHelpTutorial) && (e.keyCode === KEYS.H || e.keyCode === KEYS.ESCAPE)) {
-        this.closeHelpTutorial();
-      }
-    });
+    this.keysHelpModal();
   },
 
   preload(callback) {
@@ -405,6 +394,23 @@ const game = {
       this.modalWindow.openModal();
     }
     document.body.removeEventListener("click", this.closeModalWindow);
+  },
+
+  keysHelpModal() {
+    // Open and close Help Tutorial
+    window.addEventListener("keydown", e => {
+      if (this.level && !this.pause && !this.modalWindow.content && e.keyCode === KEYS.H) {
+        this.openHelpTutorial();
+      } else if ((this.modalWindow.content === this.modalGamePaused || this.modalWindow.content === this.modalChoosingLevel) && e.keyCode === KEYS.H) {
+        this.modalWindow.closeModal();
+        this.modalWindow.content = this.modalHelpTutorial;
+        this.modalWindow.openModal();
+      } else if (this.level && (this.modalWindow.content === this.modalHelpTutorial) && (e.keyCode === KEYS.H || e.keyCode === KEYS.ESCAPE)) {
+        this.closeHelpTutorial();
+      } else if (!this.level && (this.modalWindow.content === this.modalHelpTutorial) && (e.keyCode === KEYS.H || e.keyCode === KEYS.ESCAPE)) {
+        this.closeModalWindow();
+      }
+    });
   },
 
   clickToOpenHelp(event) {
