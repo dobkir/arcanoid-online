@@ -1,6 +1,7 @@
 game.modalWindow = {
   modal: null,
   modalContent: null,
+  content: null,
 
   modalWindow(content) {
     return (`
@@ -10,11 +11,11 @@ game.modalWindow = {
     `)
   },
 
-  openModal(content) {
+  openModal() {
     this.disableScroll();
     this.modal = document.createElement("div");
     this.modal.classList.add("modal");
-    this.modal.insertAdjacentHTML("beforeend", this.modalWindow(content));
+    this.modal.insertAdjacentHTML("beforeend", this.modalWindow(this.content));
     document.body.append(this.modal);
     this.modalContent = document.querySelector(".modal__content");
     this.modal.classList.add("active");
@@ -26,7 +27,7 @@ game.modalWindow = {
     this.modal.classList.remove("active");
     this.modal.removeChild(this.modalContent);
     this.modal.remove();
-    this.modal = null;
+    this.content = null;
     this.enableScroll();
   },
 

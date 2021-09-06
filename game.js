@@ -95,7 +95,8 @@ const game = {
 
   setLevelSettings() {
     this.setLevel();
-    !this.level && this.modalWindow.openModal(this.modalChoosingLevel);
+    this.modalWindow.content = this.modalChoosingLevel;
+    !this.level && this.modalWindow.openModal();
 
     if (this.level === "beginner") {
       this.rows = 4;
@@ -147,17 +148,22 @@ const game = {
     });
     // Paused and unpaused the game
     window.addEventListener("keydown", e => {
-      if (!this.pause && !this.modalWindow.modal && e.keyCode === KEYS.P) {
+      if (!this.pause && !this.modalWindow.content && e.keyCode === KEYS.P) {
         this.pausedGame();
-      } else if (this.pause && this.modalWindow.modal && (e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE)) {
+        console.log(this.modalWindow.content);
+      } else if (this.pause && this.modalWindow.content && (e.keyCode === KEYS.P || e.keyCode === KEYS.ESCAPE)) {
         this.unpausedGame();
       }
     });
     // Open and close Help Tutorial
     window.addEventListener("keydown", e => {
-      if (!this.pause && !this.modalWindow.modal && e.keyCode === KEYS.H) {
+      if (!this.pause && !this.modalWindow.content && e.keyCode === KEYS.H) {
         this.openHelpTutorial();
-      } else if (this.pause && this.modalWindow.modal && (e.keyCode === KEYS.H || e.keyCode === KEYS.ESCAPE)) {
+      } else if ((this.modalWindow.content === this.modalGamePaused) && e.keyCode === KEYS.H) {
+        this.modalWindow.closeModal();
+        this.modalWindow.content = this.modalHelpTutorial;
+        this.modalWindow.openModal();
+      } else if ((this.modalWindow.content === this.modalHelpTutorial) && (e.keyCode === KEYS.H || e.keyCode === KEYS.ESCAPE)) {
         this.closeHelpTutorial();
       }
     });
@@ -292,8 +298,10 @@ const game = {
   openHelpTutorial() {
     this.running = false;
     this.pause = true;
-    this.modalWindow.openModal(this.modalHelpTutorial);
+    this.modalWindow.content = this.modalHelpTutorial;
+    this.modalWindow.openModal();
     document.body.addEventListener("click", this.closeModalWindow.bind(game));
+    HELP.addEventListener("click", this.clickToCloseHelp.bind(game));
   },
 
   closeHelpTutorial() {
@@ -314,7 +322,8 @@ const game = {
   pausedGame() {
     this.running = false;
     this.pause = true;
-    this.modalWindow.openModal(this.modalGamePaused);
+    this.modalWindow.content = this.modalGamePaused;
+    this.modalWindow.openModal();
   },
 
   unpausedGame() {
@@ -334,8 +343,9 @@ const game = {
   },
 
   endGame(messageType) {
-    if (!this.modalWindow.modal && this.running) {
-      this.modalWindow.openModal(messageType);
+    if (!this.modalWindow.content && this.running) {
+      this.modalWindow.content = messageType;
+      this.modalWindow.openModal();
       this.running = false;
 
       document.body.addEventListener("click", this.confirmEndGame.bind(game));
@@ -384,20 +394,42 @@ const game = {
   },
 
   closeModalWindow(event) {
-    if (event.target.value === "closeModal") {
+    if (this.level && this.modalWindow.content && event.target.value === "closeModal") {
       this.modalWindow.closeModal();
       this.pause = false;
       this.running = true;
       this.runGame();
+    } else if (!this.level && this.modalWindow.content === this.modalHelpTutorial) {
+      this.modalWindow.closeModal();
+      this.modalWindow.content = this.modalChoosingLevel;
+      this.modalWindow.openModal();
     }
     document.body.removeEventListener("click", this.closeModalWindow);
   },
 
   clickToOpenHelp(event) {
-    if (!this.pause && !this.modalWindow.modal && event.target.classList.contains("help")) {
-      this.openHelpTutorial();
+    event.preventDefault();
+    event.stopPropagation();
+    document.body.addEventListener("click", this.closeModalWindow.bind(game));
+    if (!this.pause && !this.modalWindow.content && event.target.classList.contains("help")) {
+      this.openHelpTutorial()
+    } else if (this.modalWindow.content && this.modalWindow.content !== this.modalHelpTutorial && event.target.classList.contains("help")) {
+      this.modalWindow.closeModal();
+      this.modalWindow.content = this.modalHelpTutorial;
+      this.modalWindow.openModal();
     }
-    document.body.removeEventListener("click", this.clickToOpenHelp);
+    HELP.addEventListener("click", this.clickToCloseHelp.bind(game));
+    HELP.removeEventListener("click", this.clickToOpenHelp);
+  },
+
+  clickToCloseHelp(event) {
+    if (this.level && this.modalWindow.content === this.modalHelpTutorial && event.target.classList.contains("help")) {
+      this.closeHelpTutorial();
+    } else if (!this.level && this.modalWindow.content === this.modalHelpTutorial && event.target.classList.contains("help")) {
+      this.closeModalWindow();
+    }
+    HELP.addEventListener("click", this.clickToOpenHelp.bind(game));
+    HELP.removeEventListener("click", this.clickToCloseHelp);
   },
 
   random(min, max) {
