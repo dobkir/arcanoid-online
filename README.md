@@ -40,8 +40,9 @@ Distributed under the MIT License. See [LICENSE](LICENSE.txt) for more informati
 
 Project Link: [https://github.com/dobkir/arkanoid-online](https://github.com/dobkir/arkanoid-online)
 
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+- [Free graphics from PNGTREE](https://pngtree.com/)
 - [ICONS8](https://icons8.com/)
 - [Img Shields](https://shields.io)
 - [Choose an Open Source License](https://choosealicense.com)
