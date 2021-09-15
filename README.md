@@ -1,4 +1,4 @@
-# ![Arkanoid icon](/img/icons8-arkanoid-48.png) Arkanoid ![Arkanoid icon](/img/icons8-arkanoid-48.png) 
+# <p align="center"> ![Arkanoid icon](/img/icons8-arkanoid-48.png) Arkanoid ![Arkanoid icon](/img/icons8-arkanoid-48.png) </p>
 
 [![Contributors][contributors-shield]][contributors-url]&nbsp;
 [![Forks][forks-shield]][forks-url]&nbsp;
