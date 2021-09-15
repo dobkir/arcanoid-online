@@ -26,15 +26,6 @@ My version of Arkanoid.
 - Main language<br>
 ![Main language][main-language-shield]
 
-- Through:<br>
-[![React](https://img.shields.io/badge/React-282c34?style=for-the-badge&logo=React&logoColor=61dafb)](https://reactjs.org/)<br>
-[![NodeJS](https://img.shields.io/badge/Node.js-026e00?style=for-the-badge&logo=Node.js&logoColor=fff)](https://nodejs.org/)
-
-
-- IDE<br>
-![VSCode](https://img.icons8.com/color/48/000000/visual-studio-code-2019.png)<br>
- [VSCode](https://code.visualstudio.com/)
-
 <!-- LICENSE -->
 ## License
 
